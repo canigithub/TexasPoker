@@ -14,6 +14,7 @@ int main(int argc, const char * argv[]) {
 
 
     // some modifications
+    // some modification
     game * g = new game(5);
     g->startPlaying();
 
