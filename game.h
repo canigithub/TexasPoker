@@ -14,8 +14,7 @@
 
 using namespace std;
 
-class game;
-
+class player;
 
 class card {
     
@@ -29,32 +28,6 @@ public:
     char                getSuit() {return suit;};
     short               getRank() {return rank;};
 };
-
-
-
-class player {
-    
-private:
-    game *              Game;
-    vector<card *>      handCards;
-    size_t              id;
-    
-public:
-    player(game * g) : Game(g) {};
-    ~player() {};
-    void                addHand();
-    void                clrHand() {handCards.clear();};
-    vector<card *>      getHand() const {return handCards;};
-    size_t              getId() const {return id;};
-    void                setId(size_t s) {id = s;};
-    
-    void                bet(int m);
-    void                fold();
-    void                call();
-    void                raise(int m);
-    void                allin();
-};
-
 
 
 class game {
@@ -75,7 +48,7 @@ private:
     
     
 public:
-    game(short);
+    game();
     ~game();
     
     void                shuffleDeck();
@@ -88,9 +61,13 @@ public:
     void                startPlaying();
     void                syncMoney(size_t, int, int);
     void                syncFold(size_t);
-    int                 allFold() const;
+    bool                allFold() const;
     void                gameReset();
     void                query(player *);
+    
+    bool                addPlayer(player *);
+    void                rmvPlayer(player *);
+    short               getPlayerCnt();
 
 };
 

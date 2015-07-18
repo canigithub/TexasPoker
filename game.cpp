@@ -7,19 +7,13 @@
 //
 
 #include "game.h"
+#include "player.h"
 #include "pokerAI.h"
 #include <random>
-#include <chrono>
+#include <map>
 #include <assert.h>
 
-game::game(short s) {
-    
-    N           =   s;
-    gmCnt       =   0;
-    lb          =   1;
-    bb          =   2;
-    deckSize    =   52;
-    maxBet      =   0;
+game::game() : N(9), gmCnt(0), lb(1E5), bb(2E5), deckSize(52), maxBet(0) { // 9 is the max # of players in a game
     
     for (int i = 0; i < 52; ++i) {
         if (i/13 == 0) {
@@ -41,14 +35,10 @@ game::game(short s) {
     }
     
     for (int i = 0; i < N; ++i) {
-        players.push_back(new player(this));
-        fold.push_back(false);
+        players.push_back(nullptr);
+        fold.push_back(true);
         bank.push_back(2E8);
         mony.push_back(0);
-    }
-    
-    for (int i = 0; i < N; ++i) {
-        players[i]->setId(i);
     }
 }
 
@@ -66,6 +56,43 @@ game::~game() {
 }
 
 
+bool game::addPlayer(player * p) {
+    
+    assert(p);
+    
+    for (int i = 0; i < N; ++i) {
+        if (!players[i]) {
+            players[i] = p;
+            players[i]->setId(i);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+
+void game::rmvPlayer(player * p) {
+    
+    assert(p);
+    
+    size_t id = p->getId();
+    delete p;
+    players[id] = nullptr;
+    
+}
+
+short game::getPlayerCnt() {
+    
+    short num = 0;
+    
+    for (int i = 0; i < N; ++i) {
+        if (players[i])    ++num;
+    }
+    
+    return num;
+}
+
 
 card * game::pop() {
     assert(deckSize > 0);
@@ -81,8 +108,8 @@ void game::addBoard() {
 
 
 void game::shuffleDeck() {
-    unsigned seed = (unsigned) chrono::system_clock::now().time_since_epoch().count();
-    shuffle(Deck.begin(), Deck.end(), default_random_engine(seed));
+    random_device generator;
+    shuffle(Deck.begin(), Deck.end(), default_random_engine(generator()));
 }
 
 
@@ -96,36 +123,50 @@ void game::gameReset() {
     shuffleDeck();
     
     for (short i = 0; i < N; ++i) {
-        players[i]->clrHand();
-        fold[i] = false;
+        if (players[i])     players[i]->clrHand();
+        fold[i] = true;
         mony[i] = 0;
     }
 }
 
 
 void game::startPlaying() {
-
-    gmCnt   =   0;
     
-    while (true) {
-        ++gmCnt;
-        cout << "game:" << gmCnt << endl;
+    int n = getPlayerCnt();
+    size_t finalWinner = -1;
+    
+    while (n >= 2) {
         
         gameReset();
         
-        players[(gmCnt-1)%N]->bet(lb);                                  // gmCnt-1: little blind
-        players[gmCnt%N]->bet(bb);
+        ++gmCnt;
+        cout << "game:" << gmCnt << endl;
         
+        map<size_t, player *>   mappedPlayers;
+        map<size_t, size_t>     mappedId;
         
-        for (int i = 0; i < N*2; ++i) {
-            players[(gmCnt-1+i)%N]->addHand();                          // start dealing from lb
+        size_t k = 0;
+        for (int i = 0; i < N; ++i) {
+            if (players[i]) {
+                mappedPlayers[k] = players[i];
+                mappedId[k] = players[i]->getId();
+                fold[i] = false;
+                k++;
+            }
         }
         
-        short   remRnd      =   4;
+        mappedPlayers[(gmCnt-1)%n]->bet(lb);                                        // gmCnt-1: little blind
+        mappedPlayers[gmCnt%n]->bet(bb);
+        
+        for (int i = 0; i < 2*n; ++i) {
+            mappedPlayers[(gmCnt-1+i)%n]->addHand();
+        }
+        
+        short remRnd = 4;
         
         while (remRnd > 0) {
-            short   remQry      =   N;
-            int     offset      =   1;
+            short   remQry = n;
+            int     offset = 1;
             
             switch (remRnd) {
                 case 4:
@@ -141,22 +182,25 @@ void game::startPlaying() {
             }
             
             while (remQry > 0) {
-                if (allFold() >= 0)     break;
                 
-                size_t id = (gmCnt+offset)%N;
+                size_t id = (gmCnt+offset)%n;
                 
-                if (id == 0) {
+                if (allFold()) {
+                    break;
+                }
+                
+                if (mappedId[id] == 0) {
                     cout << "boardCards:";
                     for (auto i : getBoard()) {
                         cout << i->getSuit() << i->getRank() << " ";
                     }
                 }
-                
-                if (!fold[id]) {
-                    query(players[id]);
-                    if (mony[id] > maxBet) {
-                        maxBet = mony[id];
-                        remQry = N;
+    
+                if (!fold[mappedId[id]] && bank[mappedId[id]] != 0) {
+                    query(mappedPlayers[id]);
+                    if (mony[mappedId[id]] > maxBet) {
+                        maxBet = mony[mappedId[id]];
+                        remQry = n;
                     }
                 }
                 
@@ -164,7 +208,7 @@ void game::startPlaying() {
                 --remQry;
             }
             
-            if (allFold() >= 0)    break;
+            if (allFold())    break;
             
             switch (remRnd) {
                 case 4:
@@ -198,9 +242,14 @@ void game::startPlaying() {
         
         vector<size_t> winners;
         
-        if (allFold() >= 0) {
+        if (allFold()) {
             cout << "all fold. ";
-            winners.push_back(allFold());
+            for (int i = 0; i < fold.size(); ++i) {
+                if (!fold[i]) {
+                    winners.push_back(i);
+                    break;
+                }
+            }
         }
         else {
             vector<card *>  whc;                                        // win hand cards (2)
@@ -212,39 +261,55 @@ void game::startPlaying() {
             }
             cout << endl;
             
-            for (int i = 0; i < N; ++i) {                               // initialize wc
-                if (!fold[i]) {
-                    whc = players[i]->getHand();
+            //
+            
+            for (int i = 0; i < mappedId.size(); ++i) {
+                cout << "[" << mappedId[i] << "]" << ":";
+                for (auto j : mappedPlayers[i]->getHand()) {
+                    cout << j->getSuit() << j->getRank() << " ";
+                }
+            }
+            cout << endl;
+            
+            //
+            
+            for (int i = 0; i < n; ++i) {                               // initialize wc
+                if (!fold[mappedId[i]]) {
+                    whc = mappedPlayers[i]->getHand();
                     break;
                 }
             }
             
             wc = pokerAI::findBig(pokerAI::combine(getBoard(), whc));
             
-            for (int i = 0; i < N; ++i) {
-                if (!fold[i]) {
-                    cout << "[" << i << "]:";
-                    for (auto j : players[i]->getHand()) {
+            for (int i = 0; i < n; ++i) {
+                if (!fold[mappedId[i]]) {
+                    cout << "[" << mappedId[i] << "]:";
+                    for (auto j : mappedPlayers[i]->getHand()) {
                         cout << j->getSuit() << j->getRank() << " ";
                     }
                     cout << endl;
-                    vector<card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), players[i]->getHand()));
+                    vector<card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) > 0)       wc = tb;
                 }
             }
             
-            
-            for (int i = 0; i < N; ++i) {
-                if (!fold[i]) {
-                    vector<card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), players[i]->getHand()));
+            for (int i = 0; i < n; ++i) {
+                if (!fold[mappedId[i]]) {
+                    vector<card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) == 0)      winners.push_back(i);
                 }
             }
         }
         
         cout << "the winner is:";
-        for (auto i : winners) {
-            cout << i << " ";
+        if (allFold()) {
+            cout << winners[0];
+        }
+        else {
+            for (auto i : winners) {
+                cout << mappedId[i] << " ";
+            }
         }
         cout << endl;
         
@@ -255,12 +320,36 @@ void game::startPlaying() {
         
         assert(winners.size() > 0);
         
-        for (auto i : winners) {
-            bank[i] += totalMoney/winners.size();
+        if (allFold()) {
+            bank[winners[0]] += totalMoney;
+        }
+        else {
+            for (auto i : winners) {
+                bank[mappedId[i]] += totalMoney/winners.size();
+            }
+        }
+        
+        
+        for (int i = 0; i < mappedId.size(); ++i) {
+            cout << mappedId[i] << ":" << bank[mappedId[i]] << " ";
         }
         
         cout << endl << "******************************" << endl << endl;
+        
+        for (int i = 0; i < mappedId.size(); ++i) {
+            if (bank[mappedId[i]] == 0) {
+                rmvPlayer(mappedPlayers[i]);
+            }
+        }
+        
+        n = getPlayerCnt();
+        if  (allFold()) finalWinner = winners[0];
+        else            finalWinner = mappedId[winners[0]];
     }
+    
+    cout << "*****" << endl;
+    cout << "* " << finalWinner << " *" << endl;
+    cout << "*****";
 }
 
 
@@ -280,20 +369,17 @@ void game::syncFold(size_t i) {
 
 
 
-int game::allFold() const {
+bool game::allFold() const {
     
     short   cnt = 0;
-    int     ret = -1;
     
     for (int i = 0; i < N; ++i) {
         if (!fold[i]) {
             ++cnt;
-            ret = i;
         }
     }
     
-    ret = (cnt == 1) ? ret : -1;
-    return ret;
+    return (cnt == 1) ? true : false;
 }
 
 
@@ -313,10 +399,13 @@ void game::query(player * p) {
             cout << i << " ";
         }
         cout << " bank:" << getBank()[id];
-        cout << " ::1-fold, 2-call, 3-raise:";
+        cout << " >>1-fold, 2-call, 3-raise:";
         int a, b;
         cin >> a;
         switch (a) {
+            case 0:
+                p->allin(); break;
+                
             case 1:
                 p->fold();  break;
                 
@@ -349,59 +438,16 @@ void game::query(player * p) {
     else if (d == 0)            {p->call(); cout << "[" << id << "]call  ";}
     else if (d > 1 && d < 20)   {p->raise(d*maxBet - mony[id]); cout << "[" << id << "]raise  ";}
     else if (d >= 20)           {p->allin(); cout << "[" << id << "] allin  ";}
+
+//    else if (d == 0)            {p->fold(); cout << "[" << id << "]fold  ";}
+//    else if (d > 1 && d < 20)   {p->fold(); cout << "[" << id << "]fold  ";}
+//    else if (d >= 20)           {p->fold(); cout << "[" << id << "]fold  ";}
+
     
 }
 
 
 
-void player::addHand() {
-    handCards.push_back(Game->pop());
-}
-
-
-
-void player::bet(int m) {
-
-    assert(m >= 0);
-    int myBank  =   Game->getBank()[id];
-    int myMony  =   Game->getMony()[id];
-    
-    if (m > myBank) {
-        cout << "m > myBank." << endl;
-        m = myBank;
-    }
-    
-    Game->syncMoney(id, myBank-m, myMony+m);
-}
-
-
-
-void player::fold() {
-    Game->syncFold(id);
-}
-
-
-
-void player::call() {
-    int max     =   Game->getMax();
-    int myMony  =   Game->getMony()[id];
-    bet(max-myMony);
-}
-
-
-
-void player::raise(int m) {
-    bet(m);
-}
-
-
-
-void player::allin() {
-    
-    int myBank      =   Game->getBank()[id];
-    int myMony      =   Game->getMony()[id];
-    Game->syncMoney(id, 0, myMony+myBank);
-}
 
 
 
