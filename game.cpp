@@ -13,7 +13,7 @@
 #include <map>
 #include <assert.h>
 
-static string rankName[] = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", };
+static string rankName[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace", };
 static string suitName[] = {"Spade", "Heart", "Diamond", "Club", };
 
 ostream& operator << (ostream& Out, const card& Card) {
@@ -201,7 +201,6 @@ void game::startPlaying() {
             }
             
             if (allFold())    break;
-            
             switch (remRnd) {
                 case 4:
                     cout << "1st round ends." << endl;
