@@ -57,4 +57,5 @@ void player::allin() {
     int myBank      =   Game->getBank()[id];
     int myMony      =   Game->getMoney()[id];
     Game->syncMoney(id, 0, myMony+myBank);
+
 }

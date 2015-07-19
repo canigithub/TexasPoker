@@ -12,6 +12,15 @@
 #include "pokerAI.h"
 #include <map>
 
+inline int add(int a, int b) {
+    return a + b;
+}
+
+template <class T, class R>
+bool func( T t, R r) {
+    return t < r;
+}
+
 int main(int argc, const char * argv[]) {
     
     game * g = new game();

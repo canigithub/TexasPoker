@@ -336,9 +336,9 @@ void game::startPlaying() {
         else            finalWinner = mappedId[winners[0]];
     }
     
-    cout << "*****" << endl;
+    cout << "* * *" << endl;
     cout << "* " << finalWinner << " *" << endl;
-    cout << "*****";
+    cout << "* * *";
 }
 
 
@@ -434,9 +434,6 @@ void game::query(player * p) {
 
     
 }
-
-
-
 
 
 

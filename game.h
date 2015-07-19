@@ -74,7 +74,7 @@ public:
     bool                addPlayer(player *);
     void                rmvPlayer(player *);
     short               getPlayerCnt();
-
+    
 };
 
 
