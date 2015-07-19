@@ -16,19 +16,6 @@ using namespace std;
 
 class player;
 
-//class card {
-//    
-//private:
-//    char                suit;
-//    short               rank;
-//    
-//public:
-//    card(char c, short s) : suit(c), rank(s) {};
-//    ~card() {};
-//    char                getSuit() {return suit;};
-//    short               getRank() {return rank;};
-//};
-
 struct card {
     card(char suit, char rank) : Suit(suit), Rank(rank) {}
     const char Suit;
@@ -42,8 +29,8 @@ private:
     vector<const card *>      Deck;
     vector<const card *>      boardCards;
     const int           maxNum;
-    short               playerNum;
-    short               deckSize;
+    int                 deckSize;
+    int                 playerCnt;
     int                 gmCnt;
     int                 lb;
     int                 bb;
@@ -73,8 +60,6 @@ public:
     
     bool                addPlayer(player *);
     void                rmvPlayer(player *);
-    short               getPlayerCnt();
-    
 };
 
 
