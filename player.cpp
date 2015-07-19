@@ -20,7 +20,7 @@ void player::bet(int m) {
     
     assert(m >= 0);
     int myBank  =   Game->getBank()[id];
-    int myMony  =   Game->getMony()[id];
+    int myMony  =   Game->getMoney()[id];
     
     if (m > myBank) {
         cout << "m > myBank." << endl;
@@ -40,7 +40,7 @@ void player::fold() {
 
 void player::call() {
     int max     =   Game->getMax();
-    int myMony  =   Game->getMony()[id];
+    int myMony  =   Game->getMoney()[id];
     bet(max-myMony);
 }
 
@@ -55,6 +55,6 @@ void player::raise(int m) {
 void player::allin() {
     
     int myBank      =   Game->getBank()[id];
-    int myMony      =   Game->getMony()[id];
+    int myMony      =   Game->getMoney()[id];
     Game->syncMoney(id, 0, myMony+myBank);
 }

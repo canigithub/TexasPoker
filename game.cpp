@@ -20,17 +20,15 @@ ostream& operator << (ostream& Out, const card& Card) {
     return Out << suitName[Card.Suit] << "_" << rankName[Card.Rank];
 }
 
-game::game() : N(9), gmCnt(0), lb(1E5), bb(2E5), deckSize(52), maxBet(0) { // 9 is the max # of players in a game
-    
+game::game() :
+    maxNum(9), gmCnt(0), lb(1E5), bb(2E5),
+    deckSize(52), maxBet(0),
+    players(maxNum, nullptr),
+    fold(maxNum, true),
+    bank(maxNum, 2e8),
+    money(maxNum, 0) { // 9 is the max # of players in a game
     for (int i = 0; i < 52; ++i) {
         Deck.push_back(new card(i / 13, i % 13));
-    }
-    
-    for (int i = 0; i < N; ++i) {
-        players.push_back(nullptr);
-        fold.push_back(true);
-        bank.push_back(2E8);
-        mony.push_back(0);
     }
 }
 
@@ -52,7 +50,7 @@ bool game::addPlayer(player * p) {
     
     assert(p);
     
-    for (int i = 0; i < N; ++i) {
+    for (int i = 0; i < maxNum; ++i) {
         if (!players[i]) {
             players[i] = p;
             players[i]->setId(i);
@@ -78,7 +76,7 @@ short game::getPlayerCnt() {
     
     short num = 0;
     
-    for (int i = 0; i < N; ++i) {
+    for (int i = 0; i < maxNum; ++i) {
         if (players[i])    ++num;
     }
     
@@ -114,10 +112,10 @@ void game::gameReset() {
     boardCards.clear();
     shuffleDeck();
     
-    for (short i = 0; i < N; ++i) {
+    for (short i = 0; i < maxNum; ++i) {
         if (players[i])     players[i]->clrHand();
         fold[i] = true;
-        mony[i] = 0;
+        money[i] = 0;
     }
 }
 
@@ -138,7 +136,7 @@ void game::startPlaying() {
         map<size_t, size_t>     mappedId;
         
         size_t k = 0;
-        for (int i = 0; i < N; ++i) {
+        for (int i = 0; i < maxNum; ++i) {
             if (players[i]) {
                 mappedPlayers[k] = players[i];
                 mappedId[k] = players[i]->getId();
@@ -190,8 +188,8 @@ void game::startPlaying() {
     
                 if (!fold[mappedId[id]] && bank[mappedId[id]] != 0) {
                     query(mappedPlayers[id]);
-                    if (mony[mappedId[id]] > maxBet) {
-                        maxBet = mony[mappedId[id]];
+                    if (money[mappedId[id]] > maxBet) {
+                        maxBet = money[mappedId[id]];
                         remQry = n;
                     }
                 }
@@ -226,7 +224,7 @@ void game::startPlaying() {
         }
         
         cout << "mony:";
-        for (auto i : mony) {
+        for (auto i : money) {
             cout << " " << i;
         }
         cout << endl;
@@ -305,7 +303,7 @@ void game::startPlaying() {
         cout << endl;
         
         int totalMoney = 0;
-        for (auto i : mony) {
+        for (auto i : money) {
             totalMoney += i;
         }
         
@@ -346,15 +344,15 @@ void game::startPlaying() {
 
 
 void game::syncMoney(size_t i, int b, int m) {
-    assert(i >= 0 && i < N && b >= 0 && m >= 0);
+    assert(i >= 0 && i < maxNum && b >= 0 && m >= 0);
     bank[i] = b;
-    mony[i] = m;
+    money[i] = m;
 }
 
 
 
 void game::syncFold(size_t i) {
-    assert(i >= 0 && i < N);
+    assert(i >= 0 && i < maxNum);
     fold[i] = true;
 }
 
@@ -364,7 +362,7 @@ bool game::allFold() const {
     
     short   cnt = 0;
     
-    for (int i = 0; i < N; ++i) {
+    for (int i = 0; i < maxNum; ++i) {
         if (!fold[i]) {
             ++cnt;
         }
@@ -378,7 +376,7 @@ bool game::allFold() const {
 void game::query(player * p) {
 
     size_t id   =   p->getId();
-    int myMony  =   mony[id];
+    int myMony  =   money[id];
     
     if (id == 0) {
         cout << endl << "handCards:";
@@ -386,7 +384,7 @@ void game::query(player * p) {
             cout << *i << " ";
         }
         cout << "mony:";
-        for (auto i : getMony()) {
+        for (auto i : getMoney()) {
             cout << i << " ";
         }
         cout << " bank:" << getBank()[id];
@@ -427,7 +425,7 @@ void game::query(player * p) {
     
     if      (d < 0)             {p->fold(); cout << "[" << id << "]fold  ";}
     else if (d == 0)            {p->call(); cout << "[" << id << "]call  ";}
-    else if (d > 1 && d < 20)   {p->raise(d*maxBet - mony[id]); cout << "[" << id << "]raise  ";}
+    else if (d > 1 && d < 20)   {p->raise(d*maxBet - money[id]); cout << "[" << id << "]raise  ";}
     else if (d >= 20)           {p->allin(); cout << "[" << id << "] allin  ";}
 
 //    else if (d == 0)            {p->fold(); cout << "[" << id << "]fold  ";}

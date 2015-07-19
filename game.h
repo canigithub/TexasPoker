@@ -36,22 +36,21 @@ struct card {
     friend ostream& operator << (ostream& Out, const card& Card);
 };
 
-
 class game {
     
 private:
     vector<const card *>      Deck;
-    vector<player *>    players;
     vector<const card *>      boardCards;
-    short               N;
+    const int           maxNum;
     short               deckSize;
     int                 gmCnt;
     int                 lb;
     int                 bb;
     int                 maxBet;
+    vector<player *>    players;
     vector<bool>        fold;
     vector<int>         bank;
-    vector<int>         mony;
+    vector<int>         money;
     
     
 public:
@@ -63,7 +62,7 @@ public:
     void                addBoard();
     vector<const card *>      getBoard() const {return boardCards;};
     vector<int>         getBank() const {return bank;};
-    vector<int>         getMony() const {return mony;};
+    vector<int>         getMoney() const {return money;};
     int                 getMax() const {return maxBet;};
     void                startPlaying();
     void                syncMoney(size_t, int, int);
