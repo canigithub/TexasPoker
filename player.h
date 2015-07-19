@@ -20,18 +20,18 @@ using namespace std;
 class player {
     
 private:
-    game *              Game;
-    vector<const card *>      handCards;
-    size_t              id;
+    game *                  Game;
+    vector<const card *>    handCards;
+    size_t                  id;
     
 public:
     player(game * g) : Game(g) {};
     ~player() {};
-    void                addHand();
-    void                clrHand() {handCards.clear();};
-    vector<const card *>      getHand() const {return handCards;};
-    size_t              getId() const {return id;};
-    void                setId(size_t s) {id = s;};
+    void                    addHand();
+    void                    clrHand() {handCards.clear();};
+    vector<const card *>    getHand() const {return handCards;};
+    size_t                  getId() const {return id;};
+    void                    setId(size_t s) {id = s;};
     
     void                bet(int m);
     void                fold();

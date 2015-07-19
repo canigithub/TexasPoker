@@ -13,33 +13,31 @@
 #include <map>
 #include <assert.h>
 
-static string rankName[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace", };
-static string suitName[] = {"Spade", "Heart", "Diamond", "Club", };
+static string rankName[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A", };
+static string suitName[] = {"S", "H", "D", "C", };
 
 ostream& operator << (ostream& Out, const card& Card) {
-    return Out << suitName[Card.Suit] << "_" << rankName[Card.Rank];
+    return Out << suitName[Card.Suit] << rankName[Card.Rank];
 }
 
 game::game() :
-    maxNum(9), gmCnt(0), lb(1E5), bb(2E5),
-    deckSize(52), maxBet(0),
+    maxNum(9), playerNum(0), gmCnt(0), lb(1e5),                         // 9 is the max # of players in a game
+    bb(2e5), deckSize(52), maxBet(0),
     players(maxNum, nullptr),
     fold(maxNum, true),
     bank(maxNum, 2e8),
-    money(maxNum, 0) { // 9 is the max # of players in a game
+    money(maxNum, 0) {
     for (int i = 0; i < 52; ++i) {
         Deck.push_back(new card(i / 13, i % 13));
     }
 }
 
 
-
 game::~game() {
-    
     for (auto c : Deck) {
         delete c;
     }
-
+    
     for (auto p : players) {
         delete p;
     }
@@ -47,9 +45,9 @@ game::~game() {
 
 
 bool game::addPlayer(player * p) {
-    
     assert(p);
     
+    ++playerNum;
     for (int i = 0; i < maxNum; ++i) {
         if (!players[i]) {
             players[i] = p;
@@ -57,32 +55,18 @@ bool game::addPlayer(player * p) {
             return true;
         }
     }
-    
     return false;
 }
 
 
 void game::rmvPlayer(player * p) {
-    
     assert(p);
     
+    --playerNum;
     size_t id = p->getId();
     delete p;
     players[id] = nullptr;
-    
 }
-
-short game::getPlayerCnt() {
-    
-    short num = 0;
-    
-    for (int i = 0; i < maxNum; ++i) {
-        if (players[i])    ++num;
-    }
-    
-    return num;
-}
-
 
 const card * game::pop() {
     assert(deckSize > 0);
@@ -96,19 +80,15 @@ void game::addBoard() {
 }
 
 
-
 void game::shuffleDeck() {
     random_device generator;
     shuffle(Deck.begin(), Deck.end(), default_random_engine(generator()));
 }
 
 
-
 void game::gameReset() {
-    
     deckSize    =   52;
     maxBet      =   bb;
-
     boardCards.clear();
     shuffleDeck();
     
@@ -122,10 +102,9 @@ void game::gameReset() {
 
 void game::startPlaying() {
     
-    int n = getPlayerCnt();
     size_t finalWinner = -1;
     
-    while (n >= 2) {
+    while (playerNum >= 2) {
         
         gameReset();
         
@@ -145,35 +124,24 @@ void game::startPlaying() {
             }
         }
         
-        mappedPlayers[(gmCnt-1)%n]->bet(lb);                                        // gmCnt-1: little blind
-        mappedPlayers[gmCnt%n]->bet(bb);
+        mappedPlayers[(gmCnt-1)%playerNum]->bet(lb);                                        // gmCnt-1: little blind
+        mappedPlayers[gmCnt%playerNum]->bet(bb);
         
-        for (int i = 0; i < 2*n; ++i) {
-            mappedPlayers[(gmCnt-1+i)%n]->addHand();
+        for (int i = 0; i < 2*playerNum; ++i) {
+            mappedPlayers[(gmCnt-1+i)%playerNum]->addHand();
         }
         
         short remRnd = 4;
         
         while (remRnd > 0) {
-            short   remQry = n;
+            short   remQry = playerNum;
             int     offset = 1;
             
-            switch (remRnd) {
-                case 4:
-                    cout << "1st round: ";   break;
-                case 3:
-                    cout << "2nd round: ";   break;
-                case 2:
-                    cout << "3rd round: ";   break;
-                case 1:
-                    cout << "final round: "; break;
-                default:
-                    assert(false);
-            }
+            cout << "Round " << 5-remRnd << ": ";
             
             while (remQry > 0) {
                 
-                size_t id = (gmCnt+offset)%n;
+                size_t id = (gmCnt+offset)%playerNum;
                 
                 if (allFold()) {
                     break;
@@ -181,7 +149,7 @@ void game::startPlaying() {
                 
                 if (mappedId[id] == 0) {
                     cout << "boardCards:";
-                    for (auto i : getBoard()) {
+                    for (auto i : boardCards) {
                         cout << *i << " ";
                     }
                 }
@@ -190,7 +158,7 @@ void game::startPlaying() {
                     query(mappedPlayers[id]);
                     if (money[mappedId[id]] > maxBet) {
                         maxBet = money[mappedId[id]];
-                        remQry = n;
+                        remQry = playerNum;
                     }
                 }
                 
@@ -199,22 +167,21 @@ void game::startPlaying() {
             }
             
             if (allFold())    break;
+            
+            cout << endl << "Round " << 5 - remRnd << " ends." << endl;
+            
             switch (remRnd) {
                 case 4:
-                    cout << "1st round ends." << endl;
                     pop();      pop();      pop();
                     addBoard(); addBoard(); addBoard();
                     break;
                 case 3:
-                    cout << "2nd round ends." << endl;
                     pop();      addBoard();
                     break;
                 case 2:
-                    cout << "3rd round ends." << endl;
                     pop();      addBoard();
                     break;
                 case 1:
-                    cout << "final round ends." << endl;
                     break;
                 default:
                     assert(false);
@@ -223,7 +190,7 @@ void game::startPlaying() {
             --remRnd;
         }
         
-        cout << "mony:";
+        cout << "money:";
         for (auto i : money) {
             cout << " " << i;
         }
@@ -245,7 +212,7 @@ void game::startPlaying() {
             vector<const card *>  wc;                                         // win cards (5)
             
             cout << "boardCards:";
-            for (auto i : getBoard()) {
+            for (auto i : boardCards) {
                 cout << *i << " ";
             }
             cout << endl;
@@ -262,30 +229,30 @@ void game::startPlaying() {
             
             //
             
-            for (int i = 0; i < n; ++i) {                               // initialize wc
+            for (int i = 0; i < playerNum; ++i) {                               // initialize wc
                 if (!fold[mappedId[i]]) {
                     whc = mappedPlayers[i]->getHand();
                     break;
                 }
             }
             
-            wc = pokerAI::findBig(pokerAI::combine(getBoard(), whc));
+            wc = pokerAI::findBig(pokerAI::combine(boardCards, whc));
             
-            for (int i = 0; i < n; ++i) {
+            for (int i = 0; i < playerNum; ++i) {
                 if (!fold[mappedId[i]]) {
                     cout << "[" << mappedId[i] << "]:";
                     for (auto j : mappedPlayers[i]->getHand()) {
                         cout << *j << " ";
                     }
                     cout << endl;
-                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
+                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(boardCards, mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) > 0)       wc = tb;
                 }
             }
             
-            for (int i = 0; i < n; ++i) {
+            for (int i = 0; i < playerNum; ++i) {
                 if (!fold[mappedId[i]]) {
-                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
+                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(boardCards, mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) == 0)      winners.push_back(i);
                 }
             }
@@ -331,7 +298,6 @@ void game::startPlaying() {
             }
         }
         
-        n = getPlayerCnt();
         if  (allFold()) finalWinner = winners[0];
         else            finalWinner = mappedId[winners[0]];
     }
@@ -427,12 +393,6 @@ void game::query(player * p) {
     else if (d == 0)            {p->call(); cout << "[" << id << "]call  ";}
     else if (d > 1 && d < 20)   {p->raise(d*maxBet - money[id]); cout << "[" << id << "]raise  ";}
     else if (d >= 20)           {p->allin(); cout << "[" << id << "] allin  ";}
-
-//    else if (d == 0)            {p->fold(); cout << "[" << id << "]fold  ";}
-//    else if (d > 1 && d < 20)   {p->fold(); cout << "[" << id << "]fold  ";}
-//    else if (d >= 20)           {p->fold(); cout << "[" << id << "]fold  ";}
-
-    
 }
 
 

@@ -42,6 +42,7 @@ private:
     vector<const card *>      Deck;
     vector<const card *>      boardCards;
     const int           maxNum;
+    short               playerNum;
     short               deckSize;
     int                 gmCnt;
     int                 lb;
@@ -58,9 +59,8 @@ public:
     ~game();
     
     void                shuffleDeck();
-    const card *              pop();
+    const card *        pop();
     void                addBoard();
-    vector<const card *>      getBoard() const {return boardCards;};
     vector<int>         getBank() const {return bank;};
     vector<int>         getMoney() const {return money;};
     int                 getMax() const {return maxBet;};

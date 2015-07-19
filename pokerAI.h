@@ -34,12 +34,12 @@ public:
     
     pokerAI() {};
     ~pokerAI() {};
-    static vector<const card *>   combine(const vector<const card *> &, const vector<const card *> &);
-    static int              compare(const vector<const card *> &, const vector<const card *> &);
-    static vector<short>    evaluate(const vector<const card *> &);
-    static bool             isFlush(const vector<const card *> &);
-    static vector<const card *>   findBig(const vector<const card *> &);
-    static int              decision();
+    static vector<const card *>     combine(const vector<const card *> &, const vector<const card *> &);
+    static int                      compare(const vector<const card *> &, const vector<const card *> &);
+    static int                      evaluate(const vector<const card *> &);
+    static bool                     isFlush(const vector<const card *> &);
+    static vector<const card *>     findBig(const vector<const card *> &);
+    static int                      decision();
 
 };
 

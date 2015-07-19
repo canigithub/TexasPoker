@@ -15,41 +15,33 @@
 #include <random>
 
 vector<const card *> pokerAI::combine(const vector<const card *> & c1, const vector<const card *> & c2) {
-    
     vector<const card *> allCards = c1;
-    
-    for (auto i : c2) {
-        allCards.push_back(i);
-    }
-    
+    allCards.insert(allCards.end(), c2.begin(), c2.end());
     return allCards;
 }
 
 
-
 bool pokerAI::isFlush(const vector<const card *> & c) {
-    
     assert(c.size() == 5);
     
     set<char> suits;
     
     for (int i = 0; i < 5; ++i) {
         suits.insert(c[i]->Suit);
-        if (suits.size() > 1)       return false;
+        if (suits.size() > 1)   return false;
     }
-    
     return true;
 }
 
 
-
-vector<short> pokerAI::evaluate(const vector<const card *> & c) {
+int pokerAI::evaluate(const vector<const card *> & c) {
     
     assert(c.size() == 5);
     
-    vector<short>                           cardsType;
-    set<short>                              set1, set2, set3;
-    pair<set<short>::const_iterator, bool>  ret1, ret2;
+    int                                    power = 0;
+    int                                    shift = 16;
+    set<char>                              set1, set2, set3;
+    pair<set<char>::const_iterator, bool>  ret1, ret2;
     
     for (int i = 0; i < 5; ++i) {
         ret1 = set1.insert(c[i]->Rank);
@@ -59,57 +51,64 @@ vector<short> pokerAI::evaluate(const vector<const card *> & c) {
         }
     }
     
-    switch (set1.size()) {
+    switch (set1.size()) {                                                              // T:20, 1: 16, 2:12, 3:8; 4:4, 5:0
         case 5:
             if (*(set1.rbegin()) - *(set1.begin()) == 4) {
                 if (isFlush(c)) {
-                    cardsType.push_back(StraightFlush);
-                    cardsType.push_back(*(set1.rbegin()));                                  // rank of the leading card
+                    power = (StraightFlush << 20) | (*(set1.rbegin()) << shift);
                 }
                 else {
-                    cardsType.push_back(Straight);
-                    cardsType.push_back(*(set1.rbegin()));
+                    power = (Straight << 20) | (*(set1.rbegin()) << shift);
                 }
             }
             else {
                 if (isFlush(c)) {
-                    cardsType.push_back(Flush);
-                    for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                        cardsType.push_back(*rit);                                          // rank of each card
+                    power = (Flush << 20);
+                    for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                        power = power | (*rit << shift);
+                        shift = shift - 4;
                     }
                 }
                 else {
-                    cardsType.push_back(HighCard);
-                    for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                        cardsType.push_back(*rit);
+                    // high card - no need to shift Type
+                    for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                        power = power | (*rit << shift);
+                        shift = shift - 4;
                     }
                 }
             }
             break;
             
         case 4:
-            cardsType.push_back(OnePair);
-            cardsType.push_back(*(set2.begin()));                                           // rank of the pair
-            for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                if (*(rit) != *(set2.begin()))      cardsType.push_back(*rit);              // rank of the rest cards
+            power = (OnePair << 20) | (*(set2.begin()) << shift);
+            shift = shift - 4;
+            for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                if (*rit != *(set2.begin())) {
+                    power = power | (*rit << shift);
+                    shift = shift - 4;
+                }
             }
             break;
             
         case 3:
             if (set2.size() == 1) {
-                cardsType.push_back(ThreeKind);
-                cardsType.push_back(*(set2.begin()));                                       // rank of the three
-                for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                    if (*(rit) != *(set2.begin()))      cardsType.push_back(*rit);          // rank of the rest cards
+                power = (ThreeKind << 20) | (*(set2.begin()) << shift);
+                shift = shift - 4;
+                for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                    if (*rit != *(set2.begin())) {
+                        power = power | (*rit << shift);
+                        shift = shift - 4;
+                    }
                 }
             }
             else if (set2.size() == 2) {
-                cardsType.push_back(TwoPair);
-                cardsType.push_back(*(set2.rbegin()));                                      // rank of the leading pair
-                cardsType.push_back(*(set2.begin()));                                       // rank of the second pair
-                for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                    if (*(rit) != *(set2.begin()) && *(rit) != *(set2.rbegin())) {
-                        cardsType.push_back(*rit);                                          // rank of the single card
+                power = (TwoPair << 20) | (*(set2.rbegin()) << shift);
+                shift = shift - 4;
+                power = power | (*(set2.begin()) << shift);
+                shift = shift - 4;
+                for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                    if (*rit != *(set2.begin()) && *rit != *(set2.rbegin())) {
+                        power = power | (*rit << shift);
                     }
                 }
             }
@@ -120,17 +119,21 @@ vector<short> pokerAI::evaluate(const vector<const card *> & c) {
             
         case 2:
             if (set2.size() == 1) {
-                cardsType.push_back(FourKind);
-                cardsType.push_back(*(set2.begin()));                                       // rank of the four;
-                for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                    if (*(rit) != *(set2.begin()))      cardsType.push_back(*rit);          // rank of the single card
+                power = (FourKind << 20) | (*(set2.begin()) << shift);
+                shift = shift - 4;
+                for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                    if (*rit != *(set2.begin())) {
+                        power = power | (*rit << shift);
+                    }
                 }
             }
             else if (set2.size() == 2) {
-                cardsType.push_back(FullHouse);
-                cardsType.push_back(*(set3.begin()));                                       // rank of the three
-                for (set<short>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                    if (*(rit) != *(set3.begin()))      cardsType.push_back(*rit);          // rank of the pair
+                power = (FullHouse << 20) | (*(set3.begin()) << shift);
+                shift = shift - 4;
+                for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
+                    if (*rit != *(set3.begin())) {
+                        power = power | (*rit << shift);
+                    }
                 }
             }
             else {
@@ -142,37 +145,26 @@ vector<short> pokerAI::evaluate(const vector<const card *> & c) {
             assert(false);
     }
     
-    return cardsType;
+    return power;
 }
 
 
 
 int pokerAI::compare(const vector<const card *> & c1, const vector<const card *> & c2) {
-    
     assert(c1.size() == 5 && c2.size() == 5);
-    
-    vector<short> ev1 = evaluate(c1);
-    vector<short> ev2 = evaluate(c2);
-    if      (ev1[0] < ev2[0])       return -1;
-    else if (ev1[0] > ev2[0])       return 1;
-    else {
-        for (size_t i = 1; i < ev1.size(); ++i) {
-            if      (ev1[i] < ev2[i])       return -1;
-            else if (ev1[i] > ev2[i])       return 1;
-        }
-        return 0;
-    }
+    int power1 = evaluate(c1);
+    int power2 = evaluate(c2);
+    if      (power1 > power2)   return 1;
+    else if (power1 < power2)   return -1;
+    else                        return 0;
 }
 
 
 vector<const card *> pokerAI::findBig(const vector<const card *> & c) {
-    
     assert(c.size() >= 5);
     
     vector<const card *> big;
-    
     big.insert(big.end(), c.begin(), c.begin()+5);              // initialize big.
-    
     for (int i = 0; i < c.size(); ++i) {
         for (int j = i+1; j < c.size(); ++j) {
             for (int k = j+1; k < c.size(); ++k) {
@@ -193,7 +185,6 @@ vector<const card *> pokerAI::findBig(const vector<const card *> & c) {
 
     return big;
 }
-
 
 
 int pokerAI::decision() {

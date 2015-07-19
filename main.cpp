@@ -27,6 +27,7 @@ int main(int argc, const char * argv[]) {
     for (int i = 0; i < 5; ++i) {
         g->addPlayer(new player(g));
     }
+    
     g->startPlaying();
     
 //    map<int, string> mapString;
