@@ -14,9 +14,9 @@
 #include <assert.h>
 #include <random>
 
-vector<card *> pokerAI::combine(const vector<card *> & c1, const vector<card *> & c2) {
+vector<const card *> pokerAI::combine(const vector<const card *> & c1, const vector<const card *> & c2) {
     
-    vector<card *> allCards = c1;
+    vector<const card *> allCards = c1;
     
     for (auto i : c2) {
         allCards.push_back(i);
@@ -27,14 +27,14 @@ vector<card *> pokerAI::combine(const vector<card *> & c1, const vector<card *> 
 
 
 
-bool pokerAI::isFlush(const vector<card *> & c) {
+bool pokerAI::isFlush(const vector<const card *> & c) {
     
     assert(c.size() == 5);
     
     set<char> suits;
     
     for (int i = 0; i < 5; ++i) {
-        suits.insert(c[i]->getSuit());
+        suits.insert(c[i]->Suit);
         if (suits.size() > 1)       return false;
     }
     
@@ -43,7 +43,7 @@ bool pokerAI::isFlush(const vector<card *> & c) {
 
 
 
-vector<short> pokerAI::evaluate(const vector<card *> & c) {
+vector<short> pokerAI::evaluate(const vector<const card *> & c) {
     
     assert(c.size() == 5);
     
@@ -52,10 +52,10 @@ vector<short> pokerAI::evaluate(const vector<card *> & c) {
     pair<set<short>::const_iterator, bool>  ret1, ret2;
     
     for (int i = 0; i < 5; ++i) {
-        ret1 = set1.insert(c[i]->getRank());
+        ret1 = set1.insert(c[i]->Rank);
         if (!ret1.second) {
-            ret2 = set2.insert(c[i]->getRank());
-            if (!ret2.second)       set3.insert(c[i]->getRank());
+            ret2 = set2.insert(c[i]->Rank);
+            if (!ret2.second)       set3.insert(c[i]->Rank);
         }
     }
     
@@ -147,7 +147,7 @@ vector<short> pokerAI::evaluate(const vector<card *> & c) {
 
 
 
-int pokerAI::compare(const vector<card *> & c1, const vector<card *> & c2) {
+int pokerAI::compare(const vector<const card *> & c1, const vector<const card *> & c2) {
     
     assert(c1.size() == 5 && c2.size() == 5);
     
@@ -165,11 +165,11 @@ int pokerAI::compare(const vector<card *> & c1, const vector<card *> & c2) {
 }
 
 
-vector<card *> pokerAI::findBig(const vector<card *> & c) {
+vector<const card *> pokerAI::findBig(const vector<const card *> & c) {
     
     assert(c.size() >= 5);
     
-    vector<card *> big;
+    vector<const card *> big;
     
     big.insert(big.end(), c.begin(), c.begin()+5);              // initialize big.
     
@@ -178,7 +178,7 @@ vector<card *> pokerAI::findBig(const vector<card *> & c) {
             for (int k = j+1; k < c.size(); ++k) {
                 for (int m = k+1; m < c.size(); ++m) {
                     for (int n = m+1; n < c.size(); ++n) {
-                        vector<card *> t;
+                        vector<const card *> t;
                         t.push_back(c[i]);
                         t.push_back(c[j]);
                         t.push_back(c[k]);

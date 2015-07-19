@@ -13,25 +13,17 @@
 #include <map>
 #include <assert.h>
 
+static string rankName[] = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", };
+static string suitName[] = {"Spade", "Heart", "Diamond", "Club", };
+
+ostream& operator << (ostream& Out, const card& Card) {
+    return Out << suitName[Card.Suit] << "_" << rankName[Card.Rank];
+}
+
 game::game() : N(9), gmCnt(0), lb(1E5), bb(2E5), deckSize(52), maxBet(0) { // 9 is the max # of players in a game
     
     for (int i = 0; i < 52; ++i) {
-        if (i/13 == 0) {
-            card * newCard = new card('s',i%13);
-            Deck.push_back(newCard);
-        }
-        else if (i/13 == 1) {
-            card * newCard = new card('h',i%13);
-            Deck.push_back(newCard);
-        }
-        else if (i/13 == 2) {
-            card * newCard = new card('d',i%13);
-            Deck.push_back(newCard);
-        }
-        else if (i/13 == 3) {
-            card * newCard = new card('c',i%13);
-            Deck.push_back(newCard);
-        }
+        Deck.push_back(new card(i / 13, i % 13));
     }
     
     for (int i = 0; i < N; ++i) {
@@ -94,7 +86,7 @@ short game::getPlayerCnt() {
 }
 
 
-card * game::pop() {
+const card * game::pop() {
     assert(deckSize > 0);
     return Deck[--deckSize];
 }
@@ -192,7 +184,7 @@ void game::startPlaying() {
                 if (mappedId[id] == 0) {
                     cout << "boardCards:";
                     for (auto i : getBoard()) {
-                        cout << i->getSuit() << i->getRank() << " ";
+                        cout << *i << " ";
                     }
                 }
     
@@ -252,12 +244,12 @@ void game::startPlaying() {
             }
         }
         else {
-            vector<card *>  whc;                                        // win hand cards (2)
-            vector<card *>  wc;                                         // win cards (5)
+            vector<const card *>  whc;                                        // win hand cards (2)
+            vector<const card *>  wc;                                         // win cards (5)
             
             cout << "boardCards:";
             for (auto i : getBoard()) {
-                cout << i->getSuit() << i->getRank() << " ";
+                cout << *i << " ";
             }
             cout << endl;
             
@@ -266,7 +258,7 @@ void game::startPlaying() {
             for (int i = 0; i < mappedId.size(); ++i) {
                 cout << "[" << mappedId[i] << "]" << ":";
                 for (auto j : mappedPlayers[i]->getHand()) {
-                    cout << j->getSuit() << j->getRank() << " ";
+                    cout << *j << " ";
                 }
             }
             cout << endl;
@@ -286,17 +278,17 @@ void game::startPlaying() {
                 if (!fold[mappedId[i]]) {
                     cout << "[" << mappedId[i] << "]:";
                     for (auto j : mappedPlayers[i]->getHand()) {
-                        cout << j->getSuit() << j->getRank() << " ";
+                        cout << *j << " ";
                     }
                     cout << endl;
-                    vector<card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
+                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) > 0)       wc = tb;
                 }
             }
             
             for (int i = 0; i < n; ++i) {
                 if (!fold[mappedId[i]]) {
-                    vector<card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
+                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(getBoard(), mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) == 0)      winners.push_back(i);
                 }
             }
@@ -392,7 +384,7 @@ void game::query(player * p) {
     if (id == 0) {
         cout << endl << "handCards:";
         for (auto i : p->getHand()) {
-            cout << i->getSuit() << i->getRank() << " ";
+            cout << *i << " ";
         }
         cout << "mony:";
         for (auto i : getMony()) {

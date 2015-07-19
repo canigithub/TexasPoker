@@ -16,26 +16,33 @@ using namespace std;
 
 class player;
 
-class card {
-    
-private:
-    char                suit;
-    short               rank;
-    
-public:
-    card(char c, short s) : suit(c), rank(s) {};
-    ~card() {};
-    char                getSuit() {return suit;};
-    short               getRank() {return rank;};
+//class card {
+//    
+//private:
+//    char                suit;
+//    short               rank;
+//    
+//public:
+//    card(char c, short s) : suit(c), rank(s) {};
+//    ~card() {};
+//    char                getSuit() {return suit;};
+//    short               getRank() {return rank;};
+//};
+
+struct card {
+    card(char suit, char rank) : Suit(suit), Rank(rank) {}
+    const char Suit;
+    const char Rank;
+    friend ostream& operator << (ostream& Out, const card& Card);
 };
 
 
 class game {
     
 private:
-    vector<card *>      Deck;
+    vector<const card *>      Deck;
     vector<player *>    players;
-    vector<card *>      boardCards;
+    vector<const card *>      boardCards;
     short               N;
     short               deckSize;
     int                 gmCnt;
@@ -52,9 +59,9 @@ public:
     ~game();
     
     void                shuffleDeck();
-    card *              pop();
+    const card *              pop();
     void                addBoard();
-    vector<card *>      getBoard() const {return boardCards;};
+    vector<const card *>      getBoard() const {return boardCards;};
     vector<int>         getBank() const {return bank;};
     vector<int>         getMony() const {return mony;};
     int                 getMax() const {return maxBet;};

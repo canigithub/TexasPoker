@@ -21,7 +21,7 @@ class player {
     
 private:
     game *              Game;
-    vector<card *>      handCards;
+    vector<const card *>      handCards;
     size_t              id;
     
 public:
@@ -29,7 +29,7 @@ public:
     ~player() {};
     void                addHand();
     void                clrHand() {handCards.clear();};
-    vector<card *>      getHand() const {return handCards;};
+    vector<const card *>      getHand() const {return handCards;};
     size_t              getId() const {return id;};
     void                setId(size_t s) {id = s;};
     
