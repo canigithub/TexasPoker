@@ -22,7 +22,7 @@ class player {
 private:
     game *              Game;
     vector<const card *>      handCards;
-    size_t              id;
+    int              id;
     
 public:
     player(game * g) : Game(g) {};
@@ -30,8 +30,8 @@ public:
     void                addHand();
     void                clrHand() {handCards.clear();};
     vector<const card *>      getHand() const {return handCards;};
-    size_t              getId() const {return id;};
-    void                setId(size_t s) {id = s;};
+    int                 getId() const {return id;};
+    void                setId(int s) {id = s;};
     
     void                bet(int m);
     void                fold();
