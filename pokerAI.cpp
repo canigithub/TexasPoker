@@ -39,7 +39,7 @@ int pokerAI::evaluate(const vector<const card *> & c) {
     assert(c.size() == 5);
     
     int                                    power = 0;
-    int                                    shift = 16;
+    int                                    shift = 20;
     set<char>                              set1, set2, set3;
     pair<set<char>::const_iterator, bool>  ret1, ret2;
     
@@ -55,60 +55,52 @@ int pokerAI::evaluate(const vector<const card *> & c) {
         case 5:
             if (*(set1.rbegin()) - *(set1.begin()) == 4) {
                 if (isFlush(c)) {
-                    power = (StraightFlush << 20) | (*(set1.rbegin()) << shift);
+                    power = (StraightFlush << 20) | (*(set1.rbegin()) << (shift -= 4));
                 }
                 else {
-                    power = (Straight << 20) | (*(set1.rbegin()) << shift);
+                    power = (Straight << 20) | (*(set1.rbegin()) << (shift -= 4));
                 }
             }
             else {
                 if (isFlush(c)) {
                     power = (Flush << 20);
                     for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                        power = power | (*rit << shift);
-                        shift = shift - 4;
+                        power = power | (*rit << (shift -= 4));
                     }
                 }
                 else {
                     // high card - no need to shift Type
                     for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
-                        power = power | (*rit << shift);
-                        shift = shift - 4;
+                        power = power | (*rit << (shift -= 4));
                     }
                 }
             }
             break;
             
         case 4:
-            power = (OnePair << 20) | (*(set2.begin()) << shift);
-            shift = shift - 4;
+            power = (OnePair << 20) | (*(set2.begin()) << (shift -= 4));
             for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
                 if (*rit != *(set2.begin())) {
-                    power = power | (*rit << shift);
-                    shift = shift - 4;
+                    power = power | (*rit << (shift -= 4));
                 }
             }
             break;
             
         case 3:
             if (set2.size() == 1) {
-                power = (ThreeKind << 20) | (*(set2.begin()) << shift);
-                shift = shift - 4;
+                power = (ThreeKind << 20) | (*(set2.begin()) << (shift -= 4));
                 for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
                     if (*rit != *(set2.begin())) {
-                        power = power | (*rit << shift);
-                        shift = shift - 4;
+                        power = power | (*rit << (shift -= 4));
                     }
                 }
             }
             else if (set2.size() == 2) {
-                power = (TwoPair << 20) | (*(set2.rbegin()) << shift);
-                shift = shift - 4;
-                power = power | (*(set2.begin()) << shift);
-                shift = shift - 4;
+                power = (TwoPair << 20) | (*(set2.rbegin()) << (shift -= 4));
+                power = power | (*(set2.begin()) << (shift -= 4));
                 for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
                     if (*rit != *(set2.begin()) && *rit != *(set2.rbegin())) {
-                        power = power | (*rit << shift);
+                        power = power | (*rit << (shift -= 4));
                     }
                 }
             }
@@ -119,20 +111,18 @@ int pokerAI::evaluate(const vector<const card *> & c) {
             
         case 2:
             if (set2.size() == 1) {
-                power = (FourKind << 20) | (*(set2.begin()) << shift);
-                shift = shift - 4;
+                power = (FourKind << 20) | (*(set2.begin()) << (shift -= 4));
                 for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
                     if (*rit != *(set2.begin())) {
-                        power = power | (*rit << shift);
+                        power = power | (*rit << (shift -= 4));
                     }
                 }
             }
             else if (set2.size() == 2) {
-                power = (FullHouse << 20) | (*(set3.begin()) << shift);
-                shift = shift - 4;
+                power = (FullHouse << 20) | (*(set3.begin()) << (shift -= 4));
                 for (set<char>::reverse_iterator rit = set1.rbegin(); rit != set1.rend(); ++rit) {
                     if (*rit != *(set3.begin())) {
-                        power = power | (*rit << shift);
+                        power = power | (*rit << (shift -= 4));
                     }
                 }
             }
