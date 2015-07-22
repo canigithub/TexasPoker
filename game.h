@@ -16,7 +16,6 @@ using namespace std;
 
 class player;
 
-
 struct card {
     card(char suit, char rank) : Suit(suit), Rank(rank) {}
     const char Suit;
@@ -24,13 +23,11 @@ struct card {
     friend ostream& operator << (ostream& Out, const card& Card);
 };
 
-typedef const card * Cardptr;
-
 class game {
     
 private:
-    vector<Cardptr>      Deck;
-    vector<Cardptr>      boardCards;
+    vector<const card *>      Deck;
+    vector<const card *>      boardCards;
     const int           maxNum;
     int                 deckSize;
     int                 playerCnt;
@@ -49,7 +46,7 @@ public:
     ~game();
     
     void                shuffleDeck();
-    Cardptr        pop();
+    const card *        pop();
     void                addBoard();
     vector<int>         getBank() const {return bank;};
     vector<int>         getMoney() const {return money;};

@@ -14,14 +14,14 @@
 #include <assert.h>
 #include <random>
 
-vector<Cardptr> pokerAI::combine(const vector<Cardptr> & c1, const vector<Cardptr> & c2) {
-    vector<Cardptr> allCards = c1;
+vector<const card *> pokerAI::combine(const vector<const card *> & c1, const vector<const card *> & c2) {
+    vector<const card *> allCards = c1;
     allCards.insert(allCards.end(), c2.begin(), c2.end());
     return allCards;
 }
 
 
-bool pokerAI::isFlush(const vector<Cardptr> & c) {
+bool pokerAI::isFlush(const vector<const card *> & c) {
     assert(c.size() == 5);
     
     set<char> suits;
@@ -34,7 +34,7 @@ bool pokerAI::isFlush(const vector<Cardptr> & c) {
 }
 
 
-int pokerAI::evaluate(const vector<Cardptr> & c) {
+int pokerAI::evaluate(const vector<const card *> & c) {
     
     assert(c.size() == 5);
     
@@ -140,7 +140,7 @@ int pokerAI::evaluate(const vector<Cardptr> & c) {
 
 
 
-int pokerAI::compare(const vector<Cardptr> & c1, const vector<Cardptr> & c2) {
+int pokerAI::compare(const vector<const card *> & c1, const vector<const card *> & c2) {
     assert(c1.size() == 5 && c2.size() == 5);
     int power1 = evaluate(c1);
     int power2 = evaluate(c2);
@@ -150,17 +150,17 @@ int pokerAI::compare(const vector<Cardptr> & c1, const vector<Cardptr> & c2) {
 }
 
 
-vector<Cardptr> pokerAI::findBig(const vector<Cardptr> & c) {
+vector<const card *> pokerAI::findBig(const vector<const card *> & c) {
     assert(c.size() >= 5);
     
-    vector<Cardptr> big;
+    vector<const card *> big;
     big.insert(big.end(), c.begin(), c.begin()+5);              // initialize big.
     for (int i = 0; i < c.size(); ++i) {
         for (int j = i+1; j < c.size(); ++j) {
             for (int k = j+1; k < c.size(); ++k) {
                 for (int m = k+1; m < c.size(); ++m) {
                     for (int n = m+1; n < c.size(); ++n) {
-                        vector<Cardptr> t;
+                        vector<const card *> t;
                         t.push_back(c[i]);
                         t.push_back(c[j]);
                         t.push_back(c[k]);

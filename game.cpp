@@ -67,7 +67,7 @@ void game::rmvPlayer(player * p) {
     --playerCnt;
 }
 
-Cardptr game::pop() {
+const card * game::pop() {
     assert(deckSize > 0);
     return Deck[--deckSize];
 }
@@ -205,8 +205,8 @@ void game::startPlaying() {
             }
         }
         else {
-            vector<Cardptr>  whc;                                        // win hand cards (2)
-            vector<Cardptr>  wc;                                         // win cards (5)
+            vector<const card *>  whc;                                        // win hand cards (2)
+            vector<const card *>  wc;                                         // win cards (5)
             
             cout << "boardCards:";
             for (auto i : boardCards) {
@@ -242,14 +242,14 @@ void game::startPlaying() {
                         cout << *j << " ";
                     }
                     cout << endl;
-                    vector<Cardptr> tb = pokerAI::findBig(pokerAI::combine(boardCards, mappedPlayers[i]->getHand()));
+                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(boardCards, mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) > 0)       wc = tb;
                 }
             }
             
             for (int i = 0; i < playerCnt; ++i) {
                 if (!fold[mappedId[i]]) {
-                    vector<Cardptr> tb = pokerAI::findBig(pokerAI::combine(boardCards, mappedPlayers[i]->getHand()));
+                    vector<const card *> tb = pokerAI::findBig(pokerAI::combine(boardCards, mappedPlayers[i]->getHand()));
                     if (pokerAI::compare(tb, wc) == 0)      winners.push_back(i);
                 }
             }
