@@ -12,9 +12,9 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+#include "common.h"
 
-class card;
+using namespace std;
 
 class pokerAI {
     
@@ -34,11 +34,11 @@ public:
     
     pokerAI() {};
     ~pokerAI() {};
-    static vector<const card *>     combine(const vector<const card *> &, const vector<const card *> &);
-    static int                      compare(const vector<const card *> &, const vector<const card *> &);
-    static int                      evaluate(const vector<const card *> &);
-    static bool                     isFlush(const vector<const card *> &);
-    static vector<const card *>     findBig(const vector<const card *> &);
+    static vector<Cardptr>     combine(const vector<Cardptr> &, const vector<Cardptr> &);
+    static int                      compare(const vector<Cardptr> &, const vector<Cardptr> &);
+    static int                      evaluate(const vector<Cardptr> &);
+    static bool                     isFlush(const vector<Cardptr> &);
+    static vector<Cardptr>     findBig(const vector<Cardptr> &);
     static int                      decision();
 
 };

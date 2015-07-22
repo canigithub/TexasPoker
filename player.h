@@ -12,7 +12,8 @@
 #include <iostream>
 #include <vector>
 
-class card;
+#include "common.h"
+
 class game;
 
 using namespace std;
@@ -21,7 +22,7 @@ class player {
     
 private:
     game *              Game;
-    vector<const card *>      handCards;
+    vector<Cardptr>      handCards;
     int              id;
     
 public:
@@ -29,7 +30,7 @@ public:
     ~player() {};
     void                addHand();
     void                clrHand() {handCards.clear();};
-    vector<const card *>      getHand() const {return handCards;};
+    vector<Cardptr>      getHand() const {return handCards;};
     int                 getId() const {return id;};
     void                setId(int s) {id = s;};
     
