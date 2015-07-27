@@ -28,8 +28,8 @@ struct card {
 class game {
     
 private:
-    vector<Cardptr>      Deck;
-    vector<Cardptr>      boardCards;
+    vector<Cardptr>     Deck;
+    vector<Cardptr>     boardCards;
     const int           maxNum;
     int                 deckSize;
     int                 playerCnt;
@@ -41,25 +41,24 @@ private:
     vector<bool>        fold;
     vector<int>         bank;
     vector<int>         money;
-    
+    int                 getNextPlayer(int) const;
+    void                query(player *);
     
 public:
     game();
     ~game();
     
     void                shuffleDeck();
-    Cardptr        pop();
+    Cardptr             pop();
     void                addBoard();
     vector<int>         getBank() const {return bank;};
     vector<int>         getMoney() const {return money;};
     int                 getMax() const {return maxBet;};
     void                startPlaying();
-    void                syncMoney(size_t, int, int);
-    void                syncFold(size_t);
-    bool                allFold() const;
+    void                syncMoney(int, int, int);
+    void                syncFold(int);
+    int                 nonFoldCnt() const;
     void                gameReset();
-    void                query(player *);
-    
     bool                addPlayer(player *);
     void                rmvPlayer(player *);
 };

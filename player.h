@@ -23,17 +23,19 @@ class player {
     
 private:
     game *              Game;
-    vector<Cardptr>      handCards;
-    int              id;
+    vector<Cardptr>     handCards;
+    int                 id;
+    int                 bank;
     
 public:
-    player(game * g) : Game(g) {};
+    player(game * g) : Game(g), bank(2e8) {};
     ~player() {};
     void                addHand();
     void                clrHand() {handCards.clear();};
-    vector<Cardptr>      getHand() const {return handCards;};
+    vector<Cardptr>     getHand() const {return handCards;};
     int                 getId() const {return id;};
     void                setId(int s) {id = s;};
+    int                 getBank() const {return bank;};
     
     void                bet(int m);
     void                fold();
