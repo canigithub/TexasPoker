@@ -9,7 +9,6 @@
 #ifndef __TexasPoker_revised__pokerAI__
 #define __TexasPoker_revised__pokerAI__
 
-#include <iostream>
 #include <vector>
 
 #include "common.h"

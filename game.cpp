@@ -6,6 +6,7 @@
 //  Copyright (c) 2015年 Nengyun Zhang. All rights reserved.
 //
 
+#include <iostream>
 #include "game.h"
 #include "player.h"
 #include "pokerAI.h"
@@ -67,6 +68,11 @@ void game::rmvPlayer(player * p) {
     --playerCnt;
 }
 
+void game::shuffleDeck() {
+    random_device generator;
+    shuffle(Deck.begin(), Deck.end(), default_random_engine(generator()));
+}
+
 Cardptr game::pop() {
     assert(deckSize > 0);
     return Deck[--deckSize];
@@ -76,12 +82,6 @@ Cardptr game::pop() {
 void game::addBoard() {
     assert(deckSize > 0);
     boardCards.push_back(Deck[--deckSize]);
-}
-
-
-void game::shuffleDeck() {
-    random_device generator;
-    shuffle(Deck.begin(), Deck.end(), default_random_engine(generator()));
 }
 
 

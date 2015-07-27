@@ -9,7 +9,7 @@
 #ifndef __TexasPoker_revised__game__
 #define __TexasPoker_revised__game__
 
-#include <iostream>
+
 #include <vector>
 
 #include "common.h"

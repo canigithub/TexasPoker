@@ -9,10 +9,11 @@
 #ifndef __TexasPoker_revised__player__
 #define __TexasPoker_revised__player__
 
-#include <iostream>
 #include <vector>
 
 #include "common.h"
+
+
 
 class game;
 

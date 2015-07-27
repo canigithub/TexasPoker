@@ -8,12 +8,12 @@
 
 #include "player.h"
 #include "game.h"
+#include <iostream>
 #include <assert.h>
 
 void player::addHand() {
     handCards.push_back(Game->pop());
 }
-
 
 
 void player::bet(int m) {
