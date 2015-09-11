@@ -1,0 +1,74 @@
+﻿Build started 2015/9/11 0:01:57.
+     1>Project "C:\Users\Gerald\Documents\GitHub\TexasPoker\TexasPoker_VS.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt game.cpp main.cpp player.cpp pokerAI.cpp
+         pokerAI.cpp
+     1>pokerAI.cpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\pokerAI.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\game.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>pokerAI.cpp(157): warning C4018: '<': signed/unsigned mismatch
+     1>pokerAI.cpp(158): warning C4018: '<': signed/unsigned mismatch
+     1>pokerAI.cpp(159): warning C4018: '<': signed/unsigned mismatch
+     1>pokerAI.cpp(160): warning C4018: '<': signed/unsigned mismatch
+     1>pokerAI.cpp(161): warning C4018: '<': signed/unsigned mismatch
+         player.cpp
+     1>player.cpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\player.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\player.h(31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+     1>c:\users\gerald\documents\github\texaspoker\game.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+         main.cpp
+     1>main.cpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\game.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\player.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\player.h(31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+     1>c:\users\gerald\documents\github\texaspoker\pokerAI.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+         game.cpp
+     1>game.cpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\game.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\player.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>c:\users\gerald\documents\github\texaspoker\player.h(31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+     1>c:\users\gerald\documents\github\texaspoker\pokerAI.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+     1>game.cpp(20): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'std::string' (or there is no acceptable conversion)
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(497): note: could be 'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(std::basic_streambuf<char,std::char_traits<char>> *)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(477): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(const void *)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(457): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(long double)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(437): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(double)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(417): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(float)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(396): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(unsigned __int64)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(376): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(__int64)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(355): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(unsigned long)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(335): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(long)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(315): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(unsigned int)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(290): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(int)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(270): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(unsigned short)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(236): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(short)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(216): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(bool)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(209): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(std::ios_base &(__cdecl *)(std::ios_base &))'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(202): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(std::basic_ios<char,std::char_traits<char>> &(__cdecl *)(std::basic_ios<char,std::char_traits<char>> &))'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(196): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(std::basic_ostream<char,std::char_traits<char>> &(__cdecl *)(std::basic_ostream<char,std::char_traits<char>> &))'
+         game.cpp(19): note: or       'std::ostream &operator <<(std::ostream &,const card &)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\random(2800): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<char,std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,const std::bernoulli_distribution &)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(1021): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<char,std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,const std::error_code &)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(983): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<char,std::char_traits<char>,std::string>(std::basic_ostream<char,std::char_traits<char>> &&,const _Ty &)'
+                 with
+                 [
+                     _Ty=std::string
+                 ]
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(973): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,unsigned char)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(966): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,const unsigned char *)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(959): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,signed char)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(952): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,const signed char *)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(826): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,char)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(779): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,const char *)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(741): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<char,std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,char)'
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\ostream(694): note: or       'std::basic_ostream<char,std::char_traits<char>> &std::operator <<<char,std::char_traits<char>>(std::basic_ostream<char,std::char_traits<char>> &,const char *)'
+         game.cpp(20): note: while trying to match the argument list '(std::ostream, std::string)'
+     1>game.cpp(29): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+     1>game.cpp(55): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+     1>game.cpp(73): error C3861: 'shuffle': identifier not found
+         Generating Code...
+     1>Done Building Project "C:\Users\Gerald\Documents\GitHub\TexasPoker\TexasPoker_VS.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.81
