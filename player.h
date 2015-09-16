@@ -28,7 +28,7 @@ private:
     int                 bank;
     
 public:
-    player(game * g) : Game(g), bank(2e8) {};
+    player(game * g) : Game(g), bank(2e4) {};
     ~player() {};
     void                addHand();
     void                clrHand() {handCards.clear();};

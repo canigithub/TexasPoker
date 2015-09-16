@@ -21,7 +21,7 @@ ostream& operator << (ostream& Out, const card& Card) {
 }
 
 game::game() :
-    maxNum(9), playerCnt(0), gmCnt(0), lb(1E5), bb(2E5),
+    maxNum(9), playerCnt(0), gmCnt(0), lb(2), bb(4),
     deckSize(52), maxBet(bb),
     players(maxNum, nullptr),
     fold(maxNum, true),
@@ -128,7 +128,7 @@ void game::startPlaying() {
         id = getNextPlayer(++id);
         players[id]->bet(bb);
         id = getNextPlayer(++id);
-        int id0 = id;
+        int id0 = id;                                              // each round of query starts from here
         
         for (int i = 0; i < 2*playerCnt; ++i) {
             players[id2]->addHand();
@@ -150,10 +150,7 @@ void game::startPlaying() {
                 }
                 if (!fold[id] && bank[id] != 0) {
                     query(players[id]);
-                    if (money[id] > maxBet) {
-                        maxBet = money[id];
-                        remQry = nonFoldCnt();
-                    }
+                    if (money[id] > maxBet) {maxBet = money[id]; remQry = nonFoldCnt();}
                 }
                 id = getNextPlayer(++id);
                 --remQry;
@@ -163,8 +160,7 @@ void game::startPlaying() {
             cout << endl;
             switch (remRnd) {
                 case 4:
-                    pop(); pop(); pop(); addBoard();
-                    addBoard(); addBoard(); break;
+                    pop(); pop(); pop(); addBoard(); addBoard(); addBoard(); break;
                 case 3:
                     pop(); addBoard(); break;
                 case 2:
@@ -240,12 +236,11 @@ void game::startPlaying() {
         for (int i = 0; i < maxNum; ++i) {                     // print bank
             if (players[i]) cout << i << ":" << bank[i] << " ";
         }
-        cout << endl << "******************************" << endl << endl;
+        cout << endl << "*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*" << endl << endl;
         
         for (int i = 0; i < maxNum; ++i) {
             if (players[i] && bank[i] == 0) rmvPlayer(players[i]);
         }
-
         finalWinner = winners[0];
     }
     cout << "* * *" << endl;
@@ -289,19 +284,13 @@ void game::query(player * p) {
             cout << i << " ";
         }
         cout << " bank:" << getBank()[id];
-        cout << " >>1-fold, 2-call, 3-raise:";
+        cout << " >>>1-fold, 2-call, 3-raise:";
         int a, b;
         cin >> a;
         switch (a) {
-            case 0:
-                p->allin(); break;
-                
-            case 1:
-                p->fold();  break;
-                
-            case 2:
-                p->call();  break;
-                
+            case 0: p->allin(); break;
+            case 1: p->fold();  break;
+            case 2: p->call();  break;
             case 3:
                 cout << "enter $: ";
                 cin >> b;
@@ -309,13 +298,10 @@ void game::query(player * p) {
                     cout << "invalid. re-enter $: ";
                     cin >> b;
                 }
-                p->raise(b);
-                break;
-                
+                p->raise(b); break;
             default:
                 cout << "invalid input -> fold" << endl;
-                p->fold();
-                break;
+                p->fold(); break;
         }
         
         return;
